@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SantriTrack - LTQ TA'LIM MUBTADI</title>
+    <meta name="description" content="Aplikasi pencatat siswa LTQ TA'LIM MUBTADI">
+    <meta name="theme-color" content="#dde1e7">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #dde1e7;
+            --bg-alt: #e4e7ec;
+            --text: #595959;
+            --text-light: #7a7a7a;
+            --text-strong: #444;
+            --accent: #3498db;
+            --accent-dark: #2980b9;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+
+            --shadow-light: #ffffff73;
+            --shadow-dark: #babecC;
+
+            --radius: 10px;
+            --radius-sm: 8px;
+            --radius-lg: 25px;
+
+            --safe-area-top: env(safe-area-inset-top);
+            --safe-area-bottom: env(safe-area-inset-bottom);
+        }
+
+        [data-theme="dark"] {
+            --bg: #2b2e35;
+            --bg-alt: #31353d;
+            --text: #c4c8ce;
+            --text-light: #8b9099;
+            --text-strong: #e8ebef;
+            --accent: #5dade2;
+            --accent-dark: #3498db;
+            --success: #2ecc71;
+            --danger: #ff6b5a;
+            --warning: #f5b041;
+
+            --shadow-light: #3a3f48;
+            --shadow-dark: #1f2128;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body { width: 100%; height: 100%; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: background 0.3s ease, color 0.3s ease;
+            padding-top: var(--safe-area-top);
+            padding-bottom: var(--safe-area-bottom);
+        }
+
+        .sound-control {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--bg);
+            color: var(--text);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 3px 3px 6px var(--shadow-dark),
+                       -3px -3px 6px var(--shadow-light);
+            transition: all .2s ease;
+        }
+        .sound-control:hover { color: var(--accent); }
+        .sound-control:active {
+            box-shadow: inset 2px 2px 4px var(--shadow-dark),
+                        inset -2px -2px 4px var(--shadow-light);
+        }
+        .sound-control.muted { color: var(--text-light); }
+
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+            padding: var(--safe-area-top) 20px var(--safe-area-bottom);
+        }
+        .splash-logo {
+            width: 120px;
+            height: 120px;
+            background: var(--bg);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            font-size: 44px;
+            color: var(--accent);
+            box-shadow: -6px -6px 14px var(--shadow-light),
+                         6px 6px 14px var(--shadow-dark);
+            animation: floatLogo 3s ease-in-out infinite;
+        }
+        @keyframes floatLogo {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .splash-title {
+            color: var(--text-strong);
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        .splash-subtitle {
+            color: var(--text-light);
+            font-size: 1rem;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .splash-lembaga {
+            color: var(--accent);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .splash-footer {
+            position: absolute;
+            bottom: 30px;
+            left: 0; right: 0;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            padding: 0 20px;
+        }
+        .splash-footer p { margin-bottom: 4px; }
+        .splash-footer .version { font-weight: 600; color: var(--text); }
+        .splash-footer .copyright { font-size: 0.75rem; opacity: 0.8; }
+
+        #login-screen {
+            min-height: 100vh;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: var(--bg);
+        }
+        .login-container {
+            width: 100%;
+            max-width: 360px;
+            background: var(--bg);
+            border-radius: var(--radius);
+            box-shadow: -3px -3px 7px var(--shadow-light),
+                         2px 2px 5px var(--shadow-dark);
+            padding: 40px 30px;
+            animation: fadeScale .5s ease;
+        }
+        @keyframes fadeScale {
+            from { opacity: 0; transform: scale(0.92); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .app-header { text-align: center; margin-bottom: 30px; }
+        .app-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--bg);
+            border-radius: 22px;
+            margin: 0 auto 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 32px;
+            box-shadow: -4px -4px 9px var(--shadow-light),
+                         4px 4px 9px var(--shadow-dark);
+        }
+        .app-title {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: var(--text-strong);
+            margin-bottom: 5px;
+        }
+        .app-subtitle { color: var(--text-light); font-size: 0.9rem; }
+        .app-lembaga { color: var(--accent); font-size: 0.85rem; font-weight: 600; margin-top: 5px; }
+
+        .field {
+            position: relative;
+            height: 50px;
+            width: 100%;
+            margin-bottom: 22px;
+            display: flex;
+        }
+        .field input {
+            height: 100%;
+            width: 100%;
+            padding: 0 50px 0 45px;
+            outline: none;
+            border: none;
+            font-size: 16px;
+            background: var(--bg);
+            color: var(--text);
+            border-radius: var(--radius-lg);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark),
+                        inset -5px -5px 10px var(--shadow-light);
+        }
+        .field input:focus {
+            box-shadow: inset 1px 1px 2px var(--shadow-dark),
+                        inset -1px -1px 2px var(--shadow-light);
+        }
+        .field input::placeholder { color: var(--text-light); opacity: 0.7; }
+        .field .field-icon {
+            position: absolute;
+            left: 0;
+            width: 45px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 15px;
+            pointer-events: none;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 16px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: color .2s ease;
+        }
+        .toggle-password:hover { color: var(--accent); }
+
+        .btn-neu {
+            width: 100%;
+            height: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            background: var(--bg);
+            border-radius: var(--radius-lg);
+            border: none;
+            outline: none;
+            cursor: pointer;
+            color: var(--text);
+            box-shadow: 2px 2px 5px var(--shadow-dark),
+                       -5px -5px 10px var(--shadow-light);
+            transition: all .2s ease;
+        }
+        .btn-neu:hover { color: var(--accent); }
+        .btn-neu:active,
+        .btn-neu:focus {
+            color: var(--accent);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark),
+                        inset -5px -5px 10px var(--shadow-light);
+        }
+
+        .error-message {
+            color: var(--danger);
+            text-align: center;
+            margin-top: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            display: none;
+        }
+
+        #main-app {
+            display: none;
+            min-height: 100vh;
+            background: var(--bg);
+            position: relative;
+            padding-bottom: 60px;
+        }
+
+        .main-header {
+            background: var(--bg);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding-top: calc(15px + var(--safe-area-top));
+            box-shadow: 0 4px 8px rgba(0,0,0,0.04);
+        }
+        .header-title { display: flex; align-items: center; gap: 12px; }
+        .header-icon {
+            width: 42px;
+            height: 42px;
+            background: var(--bg);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 18px;
+            box-shadow: 3px 3px 6px var(--shadow-dark),
+                       -3px -3px 6px var(--shadow-light);
+        }
+        .header-title h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-strong);
+        }
+        .header-actions { display: flex; gap: 12px; align-items: center; }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 54px;
+            height: 28px;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            background: var(--bg);
+            transition: all .3s ease;
+            border-radius: 34px;
+            box-shadow: inset 2px 2px 5px var(--shadow-dark),
+                        inset -2px -2px 5px var(--shadow-light);
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background: var(--bg);
+            transition: all .3s ease;
+            border-radius: 50%;
+            box-shadow: 2px 2px 4px var(--shadow-dark),
+                       -1px -1px 3px var(--shadow-light);
+        }
+        .toggle-slider:after {
+            content: "\f186";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 7px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+            background: var(--accent);
+        }
+        .toggle-switch input:checked + .toggle-slider:after {
+            content: "\f185";
+            right: auto;
+            left: 7px;
+            color: var(--warning);
+        }
+
+        .icon-btn {
+            background: var(--bg);
+            border: none;
+            font-size: 16px;
+            color: var(--text);
+            cursor: pointer;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 3px 3px 6px var(--shadow-dark),
+                       -3px -3px 6px var(--shadow-light);
+            transition: all .2s ease;
+        }
+        .icon-btn:hover { color: var(--danger); }
+        .icon-btn:active {
+            box-shadow: inset 2px 2px 4px var(--shadow-dark),
+                        inset -2px -2px 4px var(--shadow-light);
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 15px;
+            padding: 20px;
+            background: var(--bg);
+            position: sticky;
+            top: 72px;
+            z-index: 99;
+        }
+        .nav-tab {
+            flex: 1;
+            padding: 14px 12px;
+            text-align: center;
+            background: var(--bg);
+            border: none;
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all .2s ease;
+            box-shadow: 2px 2px 5px var(--shadow-dark),
+                       -2px -2px 5px var(--shadow-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-tab.active {
+            color: var(--accent);
+            box-shadow: inset 2px 2px 5px var(--shadow-dark),
+                        inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .app-content {
+            padding: 10px 20px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .page-section { display: none; animation: fadeIn .3s ease; }
+        .page-section.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .app-footer {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: var(--bg);
+            border-top: 1px solid var(--shadow-light);
+            padding: 12px 20px;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.8rem;
+            z-index: 99;
+            padding-bottom: calc(12px + var(--safe-area-bottom));
+            box-shadow: 0 -4px 8px rgba(0,0,0,0.04);
+        }
+
+        .balance-card {
+            background: var(--bg);
+            padding: 28px 25px;
+            border-radius: var(--radius);
+            margin: 10px 0 20px;
+            box-shadow: -3px -3px 7px var(--shadow-light),
+                         2px 2px 5px var(--shadow-dark);
+        }
+        .balance-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 8px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        .balance-amount {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 14px;
+            word-break: break-word;
+        }
+        .balance-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            color: var(--text-light);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .balance-details span { display: flex; align-items: center; gap: 5px; }
+        .balance-details b { color: var(--text); }
+
+        .section-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin: 25px 0 15px;
+            color: var(--text-strong);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-title i { color: var(--accent); font-size: 0.95rem; }
+
+        .transaction-form,
+        .filter-section,
+        .chart-container {
+            background: var(--bg);
+            padding: 22px 20px;
+            border-radius: var(--radius);
+            box-shadow: -3px -3px 7px var(--shadow-light),
+                         2px 2px 5px var(--shadow-dark);
+            margin-bottom: 20px;
+        }
+
+        .form-grid,
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .form-input,
+        .filter-select {
+            padding: 13px 18px;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: 15px;
+            background: var(--bg);
+            color: var(--text);
+            width: 100%;
+            outline: none;
+            box-shadow: inset 2px 2px 5px var(--shadow-dark),
+                        inset -5px -5px 10px var(--shadow-light);
+            -webkit-appearance: none;
+        }
+        .form-input:focus,
+        .filter-select:focus {
+            box-shadow: inset 1px 1px 2px var(--shadow-dark),
+                        inset -1px -1px 2px var(--shadow-light);
+        }
+        .form-input::placeholder { color: var(--text-light); opacity: 0.75; }
+
+        .filter-label {
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: var(--text);
+            display: block;
+            font-size: 0.85rem;
+            padding-left: 5px;
+        }
+
+        .form-buttons,
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .filter-buttons { justify-content: flex-end; }
+
+        .btn {
+            padding: 13px 20px;
+            border: none;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all .2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            flex: 1;
+            min-width: 120px;
+            background: var(--bg);
+            color: var(--text);
+            box-shadow: 2px 2px 5px var(--shadow-dark),
+                       -2px -2px 5px var(--shadow-light);
+        }
+        .btn:hover { color: var(--accent); }
+        .btn:active {
+            box-shadow: inset 2px 2px 5px var(--shadow-dark),
+                        inset -2px -2px 5px var(--shadow-light);
+        }
+        .btn-primary { color: var(--accent); }
+        .btn-primary:hover { color: var(--accent-dark); }
+        .btn-success { color: var(--success); }
+        .btn-danger { color: var(--danger); }
+        .btn-warning { color: var(--warning); }
+        .btn-secondary { color: var(--text); }
+        .btn-secondary:hover { color: var(--text-strong); }
+
+        .export-section {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .export-info {
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+            padding: 10px;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            box-shadow: inset 2px 2px 4px var(--shadow-dark),
+                        inset -2px -2px 4px var(--shadow-light);
+            display: none;
+        }
+        .export-info.show { display: block; }
+
+        /* ===== JILID CARDS (pengganti month-group header) ===== */
+        .jilid-group {
+            margin-bottom: 22px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: -3px -3px 7px var(--shadow-light),
+                         2px 2px 5px var(--shadow-dark);
+        }
+        .jilid-group .jilid-header {
+            background: var(--bg);
+            color: var(--text-strong);
+            padding: 18px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-bottom: 1px solid var(--shadow-light);
+        }
+        .jilid-header > span { color: var(--accent); }
+        .jilid-totals {
+            display: flex;
+            gap: 15px;
+            font-size: 0.78rem;
+            color: var(--text-light);
+            flex-wrap: wrap;
+        }
+        .jilid-totals span { display: flex; align-items: center; gap: 4px; }
+        .jilid-totals strong { color: var(--text); font-weight: 600; }
+
+        .transactions-table {
+            width: 100%;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            background: var(--bg-alt);
+        }
+        .transactions-table table {
+            width: 100%;
+            min-width: 760px;
+            table-layout: auto;
+            border-collapse: collapse;
+        }
+        .transactions-table th,
+        .transactions-table td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--shadow-light);
+            color: var(--text);
+            white-space: nowrap;
+            font-size: 13.5px;
+        }
+        .transactions-table th {
+            background: var(--bg);
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .transactions-table tr:last-child td { border-bottom: none; }
+        .transactions-table tr:hover { background: rgba(52,152,219,.05); }
+
+        .transactions-table th.col-no,
+        .transactions-table td.col-no {
+            width: 50px;
+            min-width: 50px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--accent);
+        }
+        .transactions-table th.col-nama,
+        .transactions-table td.col-nama {
+            min-width: 300px;
+            white-space: normal;
+            word-break: break-word;
+            line-height: 1.5;
+        }
+        .transactions-table th.col-aksi,
+        .transactions-table td.col-aksi {
+            min-width: 180px;
+        }
+
+        .income-amount { color: var(--success); font-weight: 600; }
+        .expense-amount { color: var(--danger); font-weight: 600; }
+
+        .action-buttons { display: flex; gap: 6px; flex-wrap: nowrap; }
+        .action-buttons .btn {
+            padding: 8px 12px;
+            font-size: 11px;
+            min-width: 0;
+            flex: 0 0 auto;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            height: 300px;
+        }
+        .chart-placeholder {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-alt);
+            border-radius: var(--radius-sm);
+            color: var(--text-light);
+            padding: 20px;
+            text-align: center;
+            box-shadow: inset 2px 2px 5px var(--shadow-dark),
+                        inset -2px -2px 5px var(--shadow-light);
+            flex-direction: column;
+            gap: 10px;
+        }
+        .chart-placeholder i { font-size: 2rem; opacity: .5; color: var(--accent); }
+        #finance-chart { width: 100% !important; height: 100% !important; }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-light);
+            background: var(--bg);
+            border-radius: var(--radius);
+            box-shadow: -3px -3px 7px var(--shadow-light),
+                         2px 2px 5px var(--shadow-dark);
+        }
+        .empty-state i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            opacity: 0.4;
+            color: var(--accent);
+            display: block;
+        }
+        .empty-state p { font-size: 0.95rem; margin-bottom: 6px; }
+
+        .transactions-table::-webkit-scrollbar { height: 6px; }
+        .transactions-table::-webkit-scrollbar-track { background: transparent; }
+        .transactions-table::-webkit-scrollbar-thumb {
+            background: var(--shadow-dark);
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .login-container { padding: 32px 24px; }
+            .app-content { padding: 10px 15px 20px; }
+            .form-grid, .filter-grid { grid-template-columns: 1fr; gap: 12px; }
+            .form-buttons, .filter-buttons { flex-direction: row; justify-content: stretch; }
+            .btn { flex: 1; min-width: 0; padding: 12px 14px; font-size: 12.5px; }
+
+            .transactions-table table { min-width: 720px; }
+            .transactions-table th,
+            .transactions-table td { padding: 12px 14px; font-size: 13px; }
+            .transactions-table th.col-nama,
+            .transactions-table td.col-nama { min-width: 240px; }
+
+            .balance-amount { font-size: 1.7rem; }
+            .balance-details { flex-direction: column; gap: 8px; }
+            .export-section { flex-direction: column; align-items: stretch; }
+            .jilid-header { flex-direction: column; gap: 10px; align-items: flex-start; }
+            .jilid-totals { flex-direction: column; gap: 6px; width: 100%; }
+            .jilid-totals span { justify-content: space-between; width: 100%; }
+            .action-buttons { flex-direction: column; gap: 5px; }
+            .action-buttons .btn { padding: 8px 10px; font-size: 11.5px; }
+            .chart-wrapper { height: 240px; }
+            .nav-tab { padding: 12px 10px; font-size: 12px; }
+            .section-title { font-size: 1rem; margin: 20px 0 12px; }
+            .sound-control { bottom: 70px; right: 15px; width: 45px; height: 45px; }
+            .nav-tabs { top: 70px; padding: 15px; gap: 10px; }
+            .header-title h2 { font-size: 1.05rem; }
+        }
+
+        @media (max-width: 480px) {
+            .splash-title { font-size: 1.8rem; }
+            .splash-logo { width: 100px; height: 100px; font-size: 36px; border-radius: 24px; }
+            .app-title { font-size: 1.5rem; }
+            .app-icon { width: 70px; height: 70px; font-size: 26px; }
+            .balance-card { padding: 22px 20px; }
+            .balance-amount { font-size: 1.6rem; }
+            .transaction-form, .filter-section, .chart-container { padding: 18px 16px; }
+            .form-input, .filter-select { padding: 12px 16px; font-size: 14px; }
+            .btn { padding: 11px 14px; font-size: 12px; }
+            .chart-wrapper { height: 200px; }
+            .main-header { padding: 12px 15px; }
+            .icon-btn { width: 38px; height: 38px; font-size: 14px; }
+            .nav-tab { padding: 11px 8px; font-size: 11.5px; gap: 4px; }
+            .app-footer { font-size: 0.72rem; padding: 10px 15px; }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            .btn:active, .icon-btn:active, .nav-tab:active,
+            .btn-neu:active { transform: scale(0.97); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sound-control" id="sound-control" title="Mute/Unmute Sound">
+        <i class="fas fa-volume-up" id="sound-icon"></i>
+    </div>
+
+    <div id="splash-screen">
+        <div class="splash-logo"><i class="fas fa-book-quran"></i></div>
+        <h1 class="splash-title">SantriTrack</h1>
+        <p class="splash-subtitle">Pencatat Siswa &amp; Jilid</p>
+        <p class="splash-lembaga">LTQ TA'LIM MUBTADI</p>
+        <div class="splash-footer">
+            <p class="version">Version 1.0</p>
+            <p>Karya Muhammad Abid – Buatan Indonesia</p>
+            <p class="copyright">© 2027 SantriTrack. All Rights Reserved.</p>
+        </div>
+    </div>
+
+    <div id="login-screen">
+        <div class="login-container">
+            <div class="app-header">
+                <div class="app-icon"><i class="fas fa-book-quran"></i></div>
+                <h1 class="app-title">SantriTrack</h1>
+                <p class="app-subtitle">Masukkan kata sandi untuk melanjutkan</p>
+                <p class="app-lembaga">LTQ TA'LIM MUBTADI</p>
+            </div>
+            <div class="field">
+                <input type="password" id="password-input" placeholder="Masukkan password" required>
+                <span class="field-icon"><i class="fas fa-lock"></i></span>
+                <button type="button" class="toggle-password" id="toggle-password">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+            <button class="btn-neu" onclick="checkPassword()">Lanjutkan</button>
+            <div class="error-message" id="password-error">
+                <i class="fas fa-exclamation-circle"></i> Password salah!
+            </div>
+        </div>
+    </div>
+
+    <div id="main-app">
+        <header class="main-header">
+            <div class="header-title">
+                <div class="header-icon"><i class="fas fa-book-quran"></i></div>
+                <h2>SantriTrack</h2>
+            </div>
+            <div class="header-actions">
+                <label class="toggle-switch" for="dark-mode-toggle" title="Mode Gelap/Terang">
+                    <input type="checkbox" id="dark-mode-toggle">
+                    <span class="toggle-slider"></span>
+                </label>
+                <button class="icon-btn" onclick="logout()" title="Keluar">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-page="transactions-page">
+                <i class="fas fa-plus-circle"></i> Tambah Siswa
+            </button>
+            <button class="nav-tab" data-page="history-page">
+                <i class="fas fa-history"></i> Riwayat Siswa
+            </button>
+        </div>
+
+        <div class="app-content">
+            <!-- ====== HALAMAN TAMBAH ====== -->
+            <div id="transactions-page" class="page-section active">
+                <div class="balance-card">
+                    <div class="balance-label">TOTAL SISWA TERDAFTAR</div>
+                    <div class="balance-amount" id="balance-amount">0 Siswa</div>
+                    <div class="balance-details">
+                        <span><i class="fas fa-clock"></i> Update: <b id="last-update">-</b></span>
+                        <span><i class="fas fa-layer-group"></i> Total: <b id="total-transactions">0</b> data</span>
+                    </div>
+                </div>
+
+                <h3 class="section-title"><i class="fas fa-plus-circle"></i> Tambah Siswa Baru</h3>
+                <div class="transaction-form">
+                    <div class="form-grid">
+                        <input type="date" class="form-input" id="transaction-date">
+                        <input type="text" class="form-input" id="transaction-desc" placeholder="Nama lengkap siswa">
+                        <select class="form-input" id="transaction-jilid">
+                            <option value="">Pilih Jilid</option>
+                            <option value="1">Jilid 1</option>
+                            <option value="2">Jilid 2</option>
+                            <option value="3">Jilid 3</option>
+                            <option value="4">Jilid 4</option>
+                            <option value="5">Jilid 5</option>
+                            <option value="6">Jilid 6</option>
+                        </select>
+                    </div>
+                    <div class="form-buttons">
+                        <button class="btn btn-primary" onclick="addTransaction()">
+                            <i class="fas fa-plus"></i> Tambah
+                        </button>
+                        <button class="btn btn-secondary" onclick="clearForm()">
+                            <i class="fas fa-trash"></i> Bersihkan
+                        </button>
+                    </div>
+                </div>
+
+                <h3 class="section-title"><i class="fas fa-chart-bar"></i> Grafik Siswa per Jilid</h3>
+                <div class="chart-container">
+                    <div class="chart-wrapper">
+                        <div class="chart-placeholder" id="chart-placeholder">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Grafik akan ditampilkan di sini</span>
+                        </div>
+                        <canvas id="finance-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====== HALAMAN RIWAYAT ====== -->
+            <div id="history-page" class="page-section">
+                <h3 class="section-title"><i class="fas fa-filter"></i> Filter Jilid</h3>
+                <div class="filter-section">
+                    <div class="filter-grid">
+                        <div>
+                            <label class="filter-label">Pilih Jilid</label>
+                            <select class="filter-select" id="filter-jilid">
+                                <option value="">Semua Jilid</option>
+                                <option value="1">Jilid 1</option>
+                                <option value="2">Jilid 2</option>
+                                <option value="3">Jilid 3</option>
+                                <option value="4">Jilid 4</option>
+                                <option value="5">Jilid 5</option>
+                                <option value="6">Jilid 6</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filter-buttons">
+                        <button class="btn btn-primary" onclick="applyFilter()">
+                            <i class="fas fa-filter"></i> Terapkan
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetFilters()">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                    </div>
+                </div>
+
+                <h3 class="section-title"><i class="fas fa-download"></i> Export Data</h3>
+                <div class="export-section">
+                    <div class="export-info" id="export-info"></div>
+                    <button class="btn btn-success" onclick="exportToExcel()">
+                        <i class="fas fa-file-excel"></i> Export Excel
+                    </button>
+                </div>
+
+                <h3 class="section-title"><i class="fas fa-history"></i> Riwayat Siswa</h3>
+                <div id="transactions-container"></div>
+            </div>
+        </div>
+
+        <footer class="app-footer">
+            © 2027 SantriTrack — LTQ TA'LIM MUBTADI <i class="fas fa-mosque"></i>
+        </footer>
+    </div>
+
+    <script>
+        /* ==================== SOUND MANAGER ==================== */
+        const SoundManager = {
+            isMuted: false,
+            sounds: {},
+            unlocked: false,
+            init() {
+                const soundFiles = {
+                    click: 'mixkit-positive-notification-951.wav',
+                    success: 'mixkit-positive-notification-951.wav',
+                    error: 'new-notification-011-364050.mp3',
+                    notification: 'notification-center-443093.mp3'
+                };
+                Object.keys(soundFiles).forEach(key => {
+                    try {
+                        const audio = new Audio(soundFiles[key]);
+                        audio.volume = 0.5;
+                        audio.preload = 'auto';
+                        audio.addEventListener('error', () => {}, { once: true });
+                        this.sounds[key] = audio;
+                    } catch(e) { this.sounds[key] = null; }
+                });
+                try {
+                    const saved = localStorage.getItem('santriTrackSoundSettings');
+                    if (saved) this.isMuted = JSON.parse(saved).isMuted || false;
+                } catch(e) {}
+                this.updateIcon();
+            },
+            unlock() {
+                if (this.unlocked) return;
+                this.unlocked = true;
+                Object.values(this.sounds).forEach(sound => {
+                    if (!sound) return;
+                    try {
+                        const v = sound.volume;
+                        sound.volume = 0;
+                        const p = sound.play();
+                        if (p && p.catch) p.catch(() => {});
+                        setTimeout(() => {
+                            try { sound.pause(); sound.currentTime = 0; } catch(e) {}
+                            sound.volume = v;
+                        }, 80);
+                    } catch(e) {}
+                });
+            },
+            play(name) {
+                if (this.isMuted) return;
+                const sound = this.sounds[name];
+                if (!sound) return;
+                try {
+                    sound.currentTime = 0;
+                    const p = sound.play();
+                    if (p && p.catch) p.catch(() => {});
+                } catch(e) {}
+            },
+            toggleMute() {
+                this.isMuted = !this.isMuted;
+                this.updateIcon();
+                if (!this.isMuted) this.play('click');
+                try {
+                    localStorage.setItem('santriTrackSoundSettings', JSON.stringify({ isMuted: this.isMuted }));
+                } catch(e) {}
+            },
+            updateIcon() {
+                const soundIcon = document.getElementById('sound-icon');
+                const soundControl = document.getElementById('sound-control');
+                if (!soundIcon || !soundControl) return;
+                if (this.isMuted) {
+                    soundIcon.className = 'fas fa-volume-mute';
+                    soundControl.classList.add('muted');
+                } else {
+                    soundIcon.className = 'fas fa-volume-up';
+                    soundControl.classList.remove('muted');
+                }
+            }
+        };
+
+        /* ==================== STORAGE ==================== */
+        const StorageManager = {
+            STORAGE_KEY: 'santriTrackData_v1',
+            save(data) {
+                try {
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify({
+                        transactions: data.transactions || [],
+                        settings: data.settings || {},
+                        version: '1.0',
+                        lastSave: new Date().toISOString()
+                    }));
+                    return true;
+                } catch(e) { return false; }
+            },
+            load() {
+                try {
+                    const data = localStorage.getItem(this.STORAGE_KEY);
+                    if (data) {
+                        const parsed = JSON.parse(data);
+                        return { transactions: parsed.transactions || [], settings: parsed.settings || {} };
+                    }
+                } catch(e) {}
+                return { transactions: [], settings: {} };
+            }
+        };
+
+        /* ==================== STATE ==================== */
+        let transactions = [];
+        let appSettings = {};
+        const correctPassword = "free palestina";
+        let financeChart = null;
+        let filteredTransactions = [];
+        let currentFilters = { jilid: '' };
+        let currentPage = 'transactions-page';
+
+        const JILID_LABELS = {
+            '1': 'Jilid 1',
+            '2': 'Jilid 2',
+            '3': 'Jilid 3',
+            '4': 'Jilid 4',
+            '5': 'Jilid 5',
+            '6': 'Jilid 6'
+        };
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.body.setAttribute('data-theme', 'dark');
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', '#2b2e35');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                document.body.removeAttribute('data-theme');
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', '#dde1e7');
+            }
+            appSettings.theme = theme;
+            const toggle = document.getElementById('dark-mode-toggle');
+            if (toggle) toggle.checked = (theme === 'dark');
+        }
+
+        (function() {
+            try {
+                const saved = localStorage.getItem('santriTrackData_v1');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed.settings && parsed.settings.theme === 'dark') {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    }
+                }
+            } catch(e) {}
+        })();
+
+        /* ==================== DOM READY ==================== */
+        document.addEventListener('DOMContentLoaded', function() {
+            SoundManager.init();
+
+            const saved = StorageManager.load();
+            transactions = saved.transactions || [];
+            appSettings = saved.settings || {};
+
+            const dateEl = document.getElementById('transaction-date');
+            if (dateEl) dateEl.value = new Date().toISOString().split('T')[0];
+
+            const soundCtrl = document.getElementById('sound-control');
+            if (soundCtrl) {
+                soundCtrl.addEventListener('click', () => {
+                    SoundManager.unlock();
+                    SoundManager.toggleMute();
+                });
+            }
+
+            const unlockAudio = () => {
+                SoundManager.unlock();
+                document.removeEventListener('touchstart', unlockAudio);
+                document.removeEventListener('click', unlockAudio);
+            };
+            document.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
+            document.addEventListener('click', unlockAudio, { once: true });
+
+            ['transaction-desc'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('keypress', e => { if (e.key === 'Enter') addTransaction(); });
+            });
+
+            const togglePassword = document.getElementById('toggle-password');
+            const passwordInput = document.getElementById('password-input');
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', function() {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+                    SoundManager.play('click');
+                });
+                passwordInput.addEventListener('keypress', e => { if (e.key === 'Enter') checkPassword(); });
+            }
+
+            const darkToggle = document.getElementById('dark-mode-toggle');
+            if (darkToggle) {
+                darkToggle.checked = (appSettings.theme === 'dark');
+                darkToggle.addEventListener('change', function() {
+                    const newTheme = this.checked ? 'dark' : 'light';
+                    applyTheme(newTheme);
+                    SoundManager.play('click');
+                    StorageManager.save({ transactions, settings: appSettings });
+                    if (transactions.length > 0) setTimeout(renderChart, 60);
+                    if (currentPage === 'history-page') setTimeout(displayGroupedTransactions, 60);
+                });
+            }
+            applyTheme(appSettings.theme || 'light');
+        });
+
+        /* ==================== SPLASH ==================== */
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                if (!splash) return;
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    if (localStorage.getItem('santriTrackLoggedIn')) enterApp();
+                    else showLoginScreen();
+                }, 500);
+            }, 2000);
+        });
+
+        /* ==================== LOGIN ==================== */
+        function showLoginScreen() {
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('main-app').style.display = 'none';
+            const d = document.getElementById('transaction-date');
+            if (d) d.valueAsDate = new Date();
+            setTimeout(() => {
+                const pwd = document.getElementById('password-input');
+                if (pwd) pwd.focus();
+            }, 100);
+        }
+
+        function checkPassword() {
+            SoundManager.play('click');
+            const pwd = document.getElementById('password-input');
+            const err = document.getElementById('password-error');
+            if (pwd.value === correctPassword) {
+                localStorage.setItem('santriTrackLoggedIn', 'true');
+                SoundManager.play('success');
+                enterApp();
+            } else {
+                err.style.display = 'block';
+                pwd.value = '';
+                pwd.focus();
+                SoundManager.play('error');
+                setTimeout(() => { err.style.display = 'none'; }, 3000);
+            }
+        }
+
+        function enterApp() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            initializeApp();
+        }
+
+        function initializeApp() {
+            const d = document.getElementById('transaction-date');
+            if (d) d.value = new Date().toISOString().split('T')[0];
+            updateBalance();
+            renderChart();
+            filterTransactions();
+            setupNavigationTabs();
+        }
+
+        /* ==================== UTILITIES ==================== */
+        function formatDate(dateString) {
+            const d = new Date(dateString + 'T00:00:00');
+            return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+        }
+        function formatDayOnly(dateString) { return dateString.substring(8, 10); }
+
+        /* ==================== EXPORT DATA ==================== */
+        function getExportData() {
+            const { jilid } = currentFilters;
+            if (!jilid) {
+                return { data: [...transactions], label: 'Semua Jilid' };
+            }
+            const data = transactions.filter(t => t.jilid === jilid);
+            return { data, label: 'Jilid ' + jilid };
+        }
+
+        /* ==================== TRANSACTIONS ==================== */
+        function addTransaction() {
+            SoundManager.play('click');
+            const date = document.getElementById('transaction-date').value;
+            const description = document.getElementById('transaction-desc').value.trim();
+            const jilid = document.getElementById('transaction-jilid').value;
+
+            if (!date) { alert('Harap pilih tanggal!'); SoundManager.play('error'); return; }
+            if (!description) { alert('Harap isi nama siswa!'); SoundManager.play('error'); return; }
+            if (!jilid) { alert('Harap pilih jilid!'); SoundManager.play('error'); return; }
+
+            transactions.unshift({
+                id: Date.now(),
+                date,
+                description,
+                jilid,
+                timestamp: new Date().toISOString()
+            });
+            saveData();
+            updateBalance();
+            renderChart();
+            clearForm();
+            filterTransactions();
+            alert('Siswa berhasil ditambahkan!');
+            SoundManager.play('success');
+        }
+
+        function clearForm() {
+            SoundManager.play('click');
+            document.getElementById('transaction-date').valueAsDate = new Date();
+            document.getElementById('transaction-desc').value = '';
+            document.getElementById('transaction-jilid').value = '';
+        }
+
+        function deleteTransaction(id) {
+            SoundManager.play('click');
+            if (confirm('Apakah Anda yakin ingin menghapus data siswa ini?')) {
+                SoundManager.play('notification');
+                transactions = transactions.filter(t => t.id !== id);
+                saveData();
+                updateBalance();
+                renderChart();
+                filterTransactions();
+                SoundManager.play('success');
+            } else {
+                SoundManager.play('error');
+            }
+        }
+
+        function editTransaction(id) {
+            SoundManager.play('click');
+            const t = transactions.find(x => x.id === id);
+            if (!t) { SoundManager.play('error'); return; }
+            document.getElementById('transaction-date').value = t.date;
+            document.getElementById('transaction-desc').value = t.description;
+            document.getElementById('transaction-jilid').value = t.jilid;
+
+            document.getElementById('transactions-page').classList.add('active');
+            document.getElementById('history-page').classList.remove('active');
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.page === 'transactions-page');
+            });
+            currentPage = 'transactions-page';
+            SoundManager.play('success');
+
+            transactions = transactions.filter(x => x.id !== id);
+            saveData();
+            filterTransactions();
+            updateBalance();
+            renderChart();
+        }
+
+        function saveData() {
+            StorageManager.save({ transactions, settings: appSettings });
+        }
+
+        /* ==================== BALANCE / SUMMARY ==================== */
+        function updateBalance() {
+            document.getElementById('balance-amount').textContent = transactions.length + ' Siswa';
+            document.getElementById('total-transactions').textContent = transactions.length;
+            document.getElementById('last-update').textContent = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        /* ==================== CHART (jumlah siswa per jilid) ==================== */
+        function renderChart() {
+            const canvas = document.getElementById('finance-chart');
+            const placeholder = document.getElementById('chart-placeholder');
+            if (!canvas || !placeholder) return;
+            if (transactions.length === 0) {
+                if (financeChart) { financeChart.destroy(); financeChart = null; }
+                placeholder.style.display = 'flex';
+                return;
+            }
+            placeholder.style.display = 'none';
+
+            const counts = { '1':0,'2':0,'3':0,'4':0,'5':0,'6':0 };
+            transactions.forEach(t => {
+                if (counts[t.jilid] !== undefined) counts[t.jilid]++;
+            });
+
+            const labels = ['Jilid 1','Jilid 2','Jilid 3','Jilid 4','Jilid 5','Jilid 6'];
+            const dataCounts = ['1','2','3','4','5','6'].map(k => counts[k]);
+
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+            const textColor = isDark ? '#c4c8ce' : '#595959';
+
+            if (financeChart) financeChart.destroy();
+            try {
+                financeChart = new Chart(canvas.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: 'Jumlah Siswa',
+                            data: dataCounts,
+                            backgroundColor: '#3498db',
+                            borderColor: '#2980b9',
+                            borderWidth: 1,
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { labels: { color: textColor, font: { family: 'Poppins' } } },
+                            tooltip: { callbacks: { label: c => 'Siswa: ' + c.raw } }
+                        },
+                        scales: {
+                            x: { grid: { color: gridColor }, ticks: { color: textColor, font: { family: 'Poppins' } } },
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: gridColor },
+                                ticks: {
+                                    color: textColor,
+                                    font: { family: 'Poppins' },
+                                    precision: 0
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch(e) { console.error('Chart error:', e); }
+        }
+
+        /* ==================== FILTERS ==================== */
+        function filterTransactions() {
+            const { jilid } = currentFilters;
+            if (!jilid) {
+                filteredTransactions = [...transactions];
+            } else {
+                filteredTransactions = transactions.filter(t => t.jilid === jilid);
+            }
+            displayGroupedTransactions();
+            updateExportInfo();
+        }
+
+        function updateExportInfo() {
+            const infoEl = document.getElementById('export-info');
+            if (!infoEl) return;
+            const { jilid } = currentFilters;
+            if (!jilid) {
+                infoEl.classList.remove('show');
+                return;
+            }
+            infoEl.textContent = 'Export: Jilid ' + jilid;
+            infoEl.classList.add('show');
+        }
+
+        function applyFilter() {
+            SoundManager.play('click');
+            currentFilters.jilid = document.getElementById('filter-jilid').value;
+            filterTransactions();
+        }
+
+        function resetFilters() {
+            SoundManager.play('click');
+            document.getElementById('filter-jilid').value = '';
+            currentFilters = { jilid: '' };
+            filteredTransactions = [...transactions];
+            displayGroupedTransactions();
+            updateExportInfo();
+            SoundManager.play('success');
+        }
+
+        /* ==================== DISPLAY ==================== */
+        function displayGroupedTransactions() {
+            const container = document.getElementById('transactions-container');
+            if (!container) return;
+            if (transactions.length === 0) {
+                container.innerHTML = `<div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>Belum ada data siswa</p>
+                    <p style="font-size:.82rem;opacity:.7;">Tambahkan siswa baru di halaman "Tambah Siswa"</p>
+                </div>`;
+                return;
+            }
+            const toShow = filteredTransactions.length > 0 ? filteredTransactions : transactions;
+            if (toShow.length === 0) {
+                container.innerHTML = `<div class="empty-state">
+                    <i class="fas fa-search"></i>
+                    <p>Tidak ada siswa pada jilid ini</p>
+                    <p style="font-size:.82rem;opacity:.7;">Coba pilih jilid lain atau reset filter</p>
+                </div>`;
+                return;
+            }
+
+            const grouped = {};
+            toShow.forEach(t => {
+                const k = t.jilid;
+                if (!grouped[k]) grouped[k] = [];
+                grouped[k].push(t);
+            });
+
+            const sortedKeys = Object.keys(grouped).sort((a,b) => parseInt(a) - parseInt(b));
+
+            let html = '';
+            sortedKeys.forEach(jilid => {
+                const list = grouped[jilid];
+                list.sort((a, b) => new Date(b.date) - new Date(a.date));
+                let rows = '';
+                list.forEach((t, idx) => {
+                    rows += `<tr>
+                        <td class="col-no">${idx + 1}</td>
+                        <td class="col-nama">${t.description}</td>
+                        <td class="col-aksi"><div class="action-buttons">
+                            <button class="btn btn-secondary" onclick="editTransaction(${t.id})"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="btn btn-danger" onclick="deleteTransaction(${t.id})"><i class="fas fa-trash"></i> Hapus</button>
+                        </div></td>
+                    </tr>`;
+                });
+
+                html += `<div class="jilid-group">
+                    <div class="jilid-header">
+                        <span><i class="fas fa-book"></i> ${JILID_LABELS[jilid] || 'Jilid ' + jilid}</span>
+                        <div class="jilid-totals">
+                            <span><i class="fas fa-users"></i> Jumlah: <strong>${list.length} siswa</strong></span>
+                        </div>
+                    </div>
+                    <div class="transactions-table">
+                        <table>
+                            <thead><tr>
+                                <th class="col-no">No</th>
+                                <th class="col-nama">Nama Siswa</th>
+                                <th class="col-aksi">Aksi</th>
+                            </tr></thead>
+                            <tbody>${rows}</tbody>
+                        </table>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        /* ==================== EXPORT EXCEL ==================== */
+        function exportToExcel() {
+            SoundManager.play('click');
+            const { data, label } = getExportData();
+            if (data.length === 0) {
+                alert('Tidak ada data siswa untuk diexport pada filter ini!');
+                SoundManager.play('error');
+                return;
+            }
+
+            const grouped = {};
+            data.forEach(t => {
+                const k = t.jilid;
+                if (!grouped[k]) grouped[k] = [];
+                grouped[k].push(t);
+            });
+            const sortedKeys = Object.keys(grouped).sort((a,b) => parseInt(a) - parseInt(b));
+
+            const W_NO = 60;
+            const W_NAMA = 400;   // lebar kolom nama
+            const W_TGL = 140;
+
+            const titleCell = 'padding:32px 20px;background:#3498db;color:#ffffff;font-family:Arial,sans-serif;font-size:20pt;font-weight:bold;text-align:center;border:1px solid #cfcfcf;letter-spacing:1px;';
+            const infoRow   = 'padding:12px 20px;background:#f8f9fa;color:#555;font-size:10.5pt;text-align:center;border:1px solid #cfcfcf;';
+            const header    = 'padding:16px 20px;border:1px solid #cfcfcf;background:#3498db;color:#ffffff;font-family:Arial,sans-serif;font-size:11pt;font-weight:bold;text-align:center;vertical-align:middle;';
+            const cell      = 'padding:14px 20px;border:1px solid #cfcfcf;font-family:Arial,sans-serif;font-size:11pt;vertical-align:middle;mso-number-format:"\\@";';
+            const cellC     = 'padding:14px 20px;border:1px solid #cfcfcf;font-family:Arial,sans-serif;font-size:11pt;text-align:center;vertical-align:middle;font-weight:600;color:#2980b9;mso-number-format:"\\@";';
+            const jilidHdr  = 'padding:18px 20px;border:1px solid #cfcfcf;background:#2980b9;color:#ffffff;font-family:Arial,sans-serif;font-size:13pt;font-weight:bold;vertical-align:middle;letter-spacing:0.5px;';
+            const spacer    = 'height:32px;border:none;background:transparent;';
+            const recapCell = 'padding:22px;background:#2980b9;color:#ffffff;font-size:14pt;font-weight:bold;text-align:center;border:1px solid #cfcfcf;letter-spacing:1px;';
+
+            let html = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
+                               xmlns:x="urn:schemas-microsoft-com:office:excel"
+                               xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="UTF-8">
+<!--[if gte mso 9]>
+<xml>
+<x:ExcelWorkbook>
+<x:ExcelWorksheets>
+<x:ExcelWorksheet>
+<x:Name>Data Siswa</x:Name>
+<x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+</x:ExcelWorksheet>
+</x:ExcelWorksheets>
+</x:ExcelWorkbook>
+</xml>
+<![endif]-->
+<style>
+    td { mso-number-format:"\\@"; vertical-align: middle; }
+    .nama-cell { white-space: normal; word-wrap: break-word; word-break: break-word; line-height: 1.4; }
+</style>
+</head>
+<body>
+<table style="border-collapse:collapse;font-family:Arial,sans-serif;">
+<colgroup>
+    <col width="${W_NO}">
+    <col width="${W_NAMA}">
+    <col width="${W_TGL}">
+</colgroup>
+
+<tr>
+    <td colspan="3" style="${titleCell}">SantriTrack &nbsp;•&nbsp; Data Siswa LTQ TA'LIM MUBTADI</td>
+</tr>
+<tr>
+    <td colspan="3" style="${infoRow}"><b>Periode: ${label}</b></td>
+</tr>
+<tr>
+    <td colspan="3" style="${infoRow}">Diekspor: ${new Date().toLocaleString('id-ID')}</td>
+</tr>
+<tr><td colspan="3" style="${spacer}"></td></tr>
+`;
+
+            let totalAll = 0;
+
+            sortedKeys.forEach(jilid => {
+                const list = grouped[jilid];
+                list.sort((a, b) => new Date(a.date) - new Date(b.date));
+                totalAll += list.length;
+
+                html += `<tr>
+                    <td colspan="3" style="${jilidHdr}">${JILID_LABELS[jilid] || 'Jilid ' + jilid} — ${list.length} Siswa</td>
+                </tr>
+                <tr>
+                    <td width="${W_NO}" style="${header} width:${W_NO}px;">No</td>
+                    <td width="${W_NAMA}" style="${header} width:${W_NAMA}px;">Nama Siswa</td>
+                    <td width="${W_TGL}" style="${header} width:${W_TGL}px;">Tanggal Daftar</td>
+                </tr>`;
+
+                list.forEach((t, idx) => {
+                    html += `<tr>
+                        <td width="${W_NO}" style="${cellC} width:${W_NO}px;">${idx + 1}</td>
+                        <td width="${W_NAMA}" style="${cell} width:${W_NAMA}px;" class="nama-cell">${t.description}</td>
+                        <td width="${W_TGL}" style="${cell} width:${W_TGL}px;text-align:center;">${t.date}</td>
+                    </tr>`;
+                });
+
+                html += `<tr><td colspan="3" style="${spacer}"></td></tr>`;
+            });
+
+            html += `<tr>
+                <td colspan="3" style="${recapCell}">REKAP ${label.toUpperCase()}</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="${cell}"><b>Total Siswa</b></td>
+                <td style="${cellC}">${totalAll} siswa</td>
+            </tr>
+            <tr><td colspan="3" style="${spacer}"></td></tr>
+            <tr>
+                <td colspan="3" style="padding:16px;text-align:center;color:#888;font-size:9.5pt;border:none;">
+                    © 2027 SantriTrack — LTQ TA'LIM MUBTADI
+                </td>
+            </tr>
+            </table>
+</body>
+</html>`;
+
+            const blob = new Blob(['\ufeff' + html], { type: 'application/vnd.ms-excel;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `data-siswa-${label.replace(/[^\w]/g, '_')}-${new Date().toISOString().split('T')[0]}.xls`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            SoundManager.play('success');
+        }
+
+        /* ==================== NAVIGATION ==================== */
+        function setupNavigationTabs() {
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    SoundManager.play('click');
+                    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    const pageId = tab.dataset.page;
+                    document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+                    document.getElementById(pageId).classList.add('active');
+                    currentPage = pageId;
+                    if (pageId === 'history-page') {
+                        displayGroupedTransactions();
+                        updateExportInfo();
+                    }
+                });
+            });
+        }
+
+        /* ==================== LOGOUT ==================== */
+        function logout() {
+            SoundManager.play('click');
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                localStorage.removeItem('santriTrackLoggedIn');
+                showLoginScreen();
+                document.getElementById('password-input').value = '';
+            }
+        }
+    </script>
+</body>
+</html>
