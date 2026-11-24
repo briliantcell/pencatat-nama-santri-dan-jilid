@@ -5,10 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SantriTrack - LTQ TA'LIM MUBTADI</title>
     <meta name="description" content="Aplikasi pencatat siswa LTQ TA'LIM MUBTADI">
-    <meta name="theme-color" content="#dde1e7">
+    <meta name="theme-color" content="#3498db">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="SantriTrack">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Favicon / Logo (SVG buku Quran) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMzQ5OGRiIi8+PHBhdGggZD0iTTUwIDIyIEMzOCAyMiAzMCAyOCAzMCAzOCBMMzAgNzIgQzMwIDcyIDM4IDY4IDUwIDY4IEM2MiA2OCA3MCA3MiA3MCA3MiBMNzAgMzggQzcwIDI4IDYyIDIyIDUwIDIyIFoiIGZpbGw9IiNmZmZmZmYiLz48cGF0aCBkPSJNNTAgMjggTDUwIDY2IiBzdHJva2U9IiMzNDk4ZGIiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTM4IDM4IEw0NyAzOCBNMzggNDYgTDQ3IDQ2IE0zOCA1NCBMNDcgNTQiIHN0cm9rZT0iIzM0OThkYiIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik02MiAzOCBMNTMgMzggTTYyIDQ2IEw1MyA0NiBNNjIgNTQgTDUzIDU0IiBzdHJva2U9IiMzNDk4ZGIiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4=">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMzQ5OGRiIi8+PHBhdGggZD0iTTUwIDIyIEMzOCAyMiAzMCAyOCAzMCAzOCBMMzAgNzIgQzMwIDcyIDM4IDY4IDUwIDY4IEM2MiA2OCA3MCA3MiA3MCA3MiBMNzAgMzggQzcwIDI4IDYyIDIyIDUwIDIyIFoiIGZpbGw9IiNmZmZmZmYiLz48cGF0aCBkPSJNNTAgMjggTDUwIDY2IiBzdHJva2U9IiMzNDk4ZGIiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTM4IDM4IEw0NyAzOCBNMzggNDYgTDQ3IDQ2IE0zOCA1NCBMNDcgNTQiIHN0cm9rZT0iIzM0OThkYiIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik02MiAzOCBMNTMgMzggTTYyIDQ2IEw1MyA0NiBNNjIgNTQgTDUzIDU0IiBzdHJva2U9IiMzNDk4ZGIiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4=">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root {
@@ -70,31 +79,35 @@
             padding-bottom: var(--safe-area-bottom);
         }
 
-        .sound-control {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            z-index: 1000;
+        /* ===================== INSTALL PROMPT ===================== */
+        .install-prompt {
             background: var(--bg);
             color: var(--text);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 15px 20px;
+            text-align: center;
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding-top: calc(15px + var(--safe-area-top));
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .install-btn {
+            background: var(--bg);
+            color: var(--accent);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            margin-left: 10px;
             cursor: pointer;
-            box-shadow: 3px 3px 6px var(--shadow-dark),
-                       -3px -3px 6px var(--shadow-light);
-            transition: all .2s ease;
+            font-weight: 600;
+            box-shadow: 2px 2px 5px var(--shadow-dark),
+                       -2px -2px 5px var(--shadow-light);
         }
-        .sound-control:hover { color: var(--accent); }
-        .sound-control:active {
-            box-shadow: inset 2px 2px 4px var(--shadow-dark),
-                        inset -2px -2px 4px var(--shadow-light);
-        }
-        .sound-control.muted { color: var(--text-light); }
 
+        /* ===================== SPLASH ===================== */
         #splash-screen {
             position: fixed;
             inset: 0;
@@ -160,6 +173,7 @@
         .splash-footer .version { font-weight: 600; color: var(--text); }
         .splash-footer .copyright { font-size: 0.75rem; opacity: 0.8; }
 
+        /* ===================== LOGIN ===================== */
         #login-screen {
             min-height: 100vh;
             display: none;
@@ -296,6 +310,7 @@
             display: none;
         }
 
+        /* ===================== MAIN APP ===================== */
         #main-app {
             display: none;
             min-height: 100vh;
@@ -628,7 +643,6 @@
         }
         .export-info.show { display: block; }
 
-        /* ===== JILID CARDS (pengganti month-group header) ===== */
         .jilid-group {
             margin-bottom: 22px;
             border-radius: var(--radius);
@@ -713,9 +727,6 @@
             min-width: 180px;
         }
 
-        .income-amount { color: var(--success); font-weight: 600; }
-        .expense-amount { color: var(--danger); font-weight: 600; }
-
         .action-buttons { display: flex; gap: 6px; flex-wrap: nowrap; }
         .action-buttons .btn {
             padding: 8px 12px;
@@ -730,7 +741,8 @@
             height: 300px;
         }
         .chart-placeholder {
-            height: 100%;
+            position: absolute;
+            inset: 0;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -743,9 +755,11 @@
                         inset -2px -2px 5px var(--shadow-light);
             flex-direction: column;
             gap: 10px;
+            z-index: 2;
         }
+        .chart-placeholder.hidden { display: none; }
         .chart-placeholder i { font-size: 2rem; opacity: .5; color: var(--accent); }
-        #finance-chart { width: 100% !important; height: 100% !important; }
+        #finance-chart { position: relative; z-index: 1; width: 100% !important; height: 100% !important; }
 
         .empty-state {
             text-align: center;
@@ -796,7 +810,6 @@
             .chart-wrapper { height: 240px; }
             .nav-tab { padding: 12px 10px; font-size: 12px; }
             .section-title { font-size: 1rem; margin: 20px 0 12px; }
-            .sound-control { bottom: 70px; right: 15px; width: 45px; height: 45px; }
             .nav-tabs { top: 70px; padding: 15px; gap: 10px; }
             .header-title h2 { font-size: 1.05rem; }
         }
@@ -826,8 +839,12 @@
 </head>
 <body>
 
-    <div class="sound-control" id="sound-control" title="Mute/Unmute Sound">
-        <i class="fas fa-volume-up" id="sound-icon"></i>
+    <div class="install-prompt" id="install-prompt">
+        <span>Pasang SantriTrack di perangkat Anda</span>
+        <button class="install-btn" id="install-btn">Pasang</button>
+        <button class="install-btn" onclick="hideInstallPrompt()" style="background: transparent; box-shadow: none;">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
 
     <div id="splash-screen">
@@ -948,12 +965,6 @@
                             <label class="filter-label">Pilih Jilid</label>
                             <select class="filter-select" id="filter-jilid">
                                 <option value="">Semua Jilid</option>
-                                <option value="1">Jilid 1</option>
-                                <option value="2">Jilid 2</option>
-                                <option value="3">Jilid 3</option>
-                                <option value="4">Jilid 4</option>
-                                <option value="5">Jilid 5</option>
-                                <option value="6">Jilid 6</option>
                             </select>
                         </div>
                     </div>
@@ -986,85 +997,9 @@
     </div>
 
     <script>
-        /* ==================== SOUND MANAGER ==================== */
-        const SoundManager = {
-            isMuted: false,
-            sounds: {},
-            unlocked: false,
-            init() {
-                const soundFiles = {
-                    click: 'mixkit-positive-notification-951.wav',
-                    success: 'mixkit-positive-notification-951.wav',
-                    error: 'new-notification-011-364050.mp3',
-                    notification: 'notification-center-443093.mp3'
-                };
-                Object.keys(soundFiles).forEach(key => {
-                    try {
-                        const audio = new Audio(soundFiles[key]);
-                        audio.volume = 0.5;
-                        audio.preload = 'auto';
-                        audio.addEventListener('error', () => {}, { once: true });
-                        this.sounds[key] = audio;
-                    } catch(e) { this.sounds[key] = null; }
-                });
-                try {
-                    const saved = localStorage.getItem('santriTrackSoundSettings');
-                    if (saved) this.isMuted = JSON.parse(saved).isMuted || false;
-                } catch(e) {}
-                this.updateIcon();
-            },
-            unlock() {
-                if (this.unlocked) return;
-                this.unlocked = true;
-                Object.values(this.sounds).forEach(sound => {
-                    if (!sound) return;
-                    try {
-                        const v = sound.volume;
-                        sound.volume = 0;
-                        const p = sound.play();
-                        if (p && p.catch) p.catch(() => {});
-                        setTimeout(() => {
-                            try { sound.pause(); sound.currentTime = 0; } catch(e) {}
-                            sound.volume = v;
-                        }, 80);
-                    } catch(e) {}
-                });
-            },
-            play(name) {
-                if (this.isMuted) return;
-                const sound = this.sounds[name];
-                if (!sound) return;
-                try {
-                    sound.currentTime = 0;
-                    const p = sound.play();
-                    if (p && p.catch) p.catch(() => {});
-                } catch(e) {}
-            },
-            toggleMute() {
-                this.isMuted = !this.isMuted;
-                this.updateIcon();
-                if (!this.isMuted) this.play('click');
-                try {
-                    localStorage.setItem('santriTrackSoundSettings', JSON.stringify({ isMuted: this.isMuted }));
-                } catch(e) {}
-            },
-            updateIcon() {
-                const soundIcon = document.getElementById('sound-icon');
-                const soundControl = document.getElementById('sound-control');
-                if (!soundIcon || !soundControl) return;
-                if (this.isMuted) {
-                    soundIcon.className = 'fas fa-volume-mute';
-                    soundControl.classList.add('muted');
-                } else {
-                    soundIcon.className = 'fas fa-volume-up';
-                    soundControl.classList.remove('muted');
-                }
-            }
-        };
-
         /* ==================== STORAGE ==================== */
         const StorageManager = {
-            STORAGE_KEY: 'santriTrackData_v1',
+            STORAGE_KEY: 'santriTrackData_v2',
             save(data) {
                 try {
                     localStorage.setItem(this.STORAGE_KEY, JSON.stringify({
@@ -1096,14 +1031,11 @@
         let filteredTransactions = [];
         let currentFilters = { jilid: '' };
         let currentPage = 'transactions-page';
+        let deferredPrompt = null;
 
         const JILID_LABELS = {
-            '1': 'Jilid 1',
-            '2': 'Jilid 2',
-            '3': 'Jilid 3',
-            '4': 'Jilid 4',
-            '5': 'Jilid 5',
-            '6': 'Jilid 6'
+            '1': 'Jilid 1','2': 'Jilid 2','3': 'Jilid 3',
+            '4': 'Jilid 4','5': 'Jilid 5','6': 'Jilid 6'
         };
 
         function applyTheme(theme) {
@@ -1114,7 +1046,7 @@
             } else {
                 document.documentElement.removeAttribute('data-theme');
                 document.body.removeAttribute('data-theme');
-                document.querySelector('meta[name="theme-color"]').setAttribute('content', '#dde1e7');
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', '#3498db');
             }
             appSettings.theme = theme;
             const toggle = document.getElementById('dark-mode-toggle');
@@ -1123,7 +1055,7 @@
 
         (function() {
             try {
-                const saved = localStorage.getItem('santriTrackData_v1');
+                const saved = localStorage.getItem('santriTrackData_v2');
                 if (saved) {
                     const parsed = JSON.parse(saved);
                     if (parsed.settings && parsed.settings.theme === 'dark') {
@@ -1135,30 +1067,12 @@
 
         /* ==================== DOM READY ==================== */
         document.addEventListener('DOMContentLoaded', function() {
-            SoundManager.init();
-
             const saved = StorageManager.load();
             transactions = saved.transactions || [];
             appSettings = saved.settings || {};
 
             const dateEl = document.getElementById('transaction-date');
             if (dateEl) dateEl.value = new Date().toISOString().split('T')[0];
-
-            const soundCtrl = document.getElementById('sound-control');
-            if (soundCtrl) {
-                soundCtrl.addEventListener('click', () => {
-                    SoundManager.unlock();
-                    SoundManager.toggleMute();
-                });
-            }
-
-            const unlockAudio = () => {
-                SoundManager.unlock();
-                document.removeEventListener('touchstart', unlockAudio);
-                document.removeEventListener('click', unlockAudio);
-            };
-            document.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
-            document.addEventListener('click', unlockAudio, { once: true });
 
             ['transaction-desc'].forEach(id => {
                 const el = document.getElementById(id);
@@ -1172,7 +1086,6 @@
                     const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
                     passwordInput.setAttribute('type', type);
                     this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
-                    SoundManager.play('click');
                 });
                 passwordInput.addEventListener('keypress', e => { if (e.key === 'Enter') checkPassword(); });
             }
@@ -1183,14 +1096,109 @@
                 darkToggle.addEventListener('change', function() {
                     const newTheme = this.checked ? 'dark' : 'light';
                     applyTheme(newTheme);
-                    SoundManager.play('click');
                     StorageManager.save({ transactions, settings: appSettings });
                     if (transactions.length > 0) setTimeout(renderChart, 60);
                     if (currentPage === 'history-page') setTimeout(displayGroupedTransactions, 60);
                 });
             }
             applyTheme(appSettings.theme || 'light');
+
+            const installBtn = document.getElementById('install-btn');
+            if (installBtn) {
+                installBtn.addEventListener('click', async () => {
+                    if (deferredPrompt) {
+                        try {
+                            deferredPrompt.prompt();
+                            const { outcome } = await deferredPrompt.userChoice;
+                            if (outcome === 'accepted') {
+                                hideInstallPrompt();
+                            }
+                        } catch(e) {}
+                        deferredPrompt = null;
+                    }
+                });
+            }
         });
+
+        /* ==================== PWA ==================== */
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            setTimeout(showInstallPrompt, 2000);
+        });
+
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+        window.addEventListener('load', () => {
+            if (isIOS && !isStandalone) {
+                setTimeout(() => {
+                    const promptEl = document.getElementById('install-prompt');
+                    if (promptEl) {
+                        promptEl.innerHTML = '<span style="font-size:13px;">📱 Tap <b>Share</b> → <b>Add to Home Screen</b></span>' +
+                            '<button class="install-btn" onclick="hideInstallPrompt()" style="background:transparent;box-shadow:none;padding:4px 8px;"><i class="fas fa-times"></i></button>';
+                        promptEl.style.display = 'block';
+                    }
+                }, 4000);
+            }
+        });
+
+        function showInstallPrompt() {
+            const el = document.getElementById('install-prompt');
+            if (deferredPrompt && el && !isStandalone) el.style.display = 'block';
+        }
+        function hideInstallPrompt() {
+            const el = document.getElementById('install-prompt');
+            if (el) el.style.display = 'none';
+        }
+
+        // Register Service Worker via Blob (inline)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                const swCode = `
+                    self.addEventListener('install', e => { self.skipWaiting(); });
+                    self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
+                    self.addEventListener('fetch', e => {
+                        e.respondWith(
+                            fetch(e.request).catch(() => caches.match(e.request))
+                        );
+                    });
+                `;
+                try {
+                    const blob = new Blob([swCode], { type: 'application/javascript' });
+                    const swUrl = URL.createObjectURL(blob);
+                    navigator.serviceWorker.register(swUrl).catch(() => {});
+                } catch(e) {}
+            });
+        }
+
+        // Inject manifest.json via Blob
+        (function injectManifest() {
+            const manifest = {
+                name: "SantriTrack - LTQ TA'LIM MUBTADI",
+                short_name: "SantriTrack",
+                description: "Aplikasi pencatat siswa LTQ TA'LIM MUBTADI",
+                start_url: ".",
+                display: "standalone",
+                background_color: "#dde1e7",
+                theme_color: "#3498db",
+                orientation: "portrait",
+                icons: [
+                    {
+                        src: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMzQ5OGRiIi8+PHBhdGggZD0iTTUwIDIyIEMzOCAyMiAzMCAyOCAzMCAzOCBMMzAgNzIgQzMwIDcyIDM4IDY4IDUwIDY4IEM2MiA2OCA3MCA3MiA3MCA3MiBMNzAgMzggQzcwIDI4IDYyIDIyIDUwIDIyIFoiIGZpbGw9IiNmZmZmZmYiLz48cGF0aCBkPSJNNTAgMjggTDUwIDY2IiBzdHJva2U9IiMzNDk4ZGIiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTM4IDM4IEw0NyAzOCBNMzggNDYgTDQ3IDQ2IE0zOCA1NCBMNDcgNTQiIHN0cm9rZT0iIzM0OThkYiIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik02MiAzOCBMNTMgMzggTTYyIDQ2IEw1MyA0NiBNNjIgNTQgTDUzIDU0IiBzdHJva2U9IiMzNDk4ZGIiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4=",
+                        sizes: "512x512",
+                        type: "image/svg+xml",
+                        purpose: "any maskable"
+                    }
+                ]
+            };
+            const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('link');
+            link.rel = 'manifest';
+            link.href = url;
+            document.head.appendChild(link);
+        })();
 
         /* ==================== SPLASH ==================== */
         window.addEventListener('load', () => {
@@ -1219,18 +1227,15 @@
         }
 
         function checkPassword() {
-            SoundManager.play('click');
             const pwd = document.getElementById('password-input');
             const err = document.getElementById('password-error');
             if (pwd.value === correctPassword) {
                 localStorage.setItem('santriTrackLoggedIn', 'true');
-                SoundManager.play('success');
                 enterApp();
             } else {
                 err.style.display = 'block';
                 pwd.value = '';
                 pwd.focus();
-                SoundManager.play('error');
                 setTimeout(() => { err.style.display = 'none'; }, 3000);
             }
         }
@@ -1245,7 +1250,11 @@
             const d = document.getElementById('transaction-date');
             if (d) d.value = new Date().toISOString().split('T')[0];
             updateBalance();
-            renderChart();
+            updateFilterJilidOptions();
+            // Render chart setelah layout settle (perbaikan bug canvas)
+            requestAnimationFrame(() => {
+                setTimeout(renderChart, 100);
+            });
             filterTransactions();
             setupNavigationTabs();
         }
@@ -1269,14 +1278,13 @@
 
         /* ==================== TRANSACTIONS ==================== */
         function addTransaction() {
-            SoundManager.play('click');
             const date = document.getElementById('transaction-date').value;
             const description = document.getElementById('transaction-desc').value.trim();
             const jilid = document.getElementById('transaction-jilid').value;
 
-            if (!date) { alert('Harap pilih tanggal!'); SoundManager.play('error'); return; }
-            if (!description) { alert('Harap isi nama siswa!'); SoundManager.play('error'); return; }
-            if (!jilid) { alert('Harap pilih jilid!'); SoundManager.play('error'); return; }
+            if (!date) { alert('Harap pilih tanggal!'); return; }
+            if (!description) { alert('Harap isi nama siswa!'); return; }
+            if (!jilid) { alert('Harap pilih jilid!'); return; }
 
             transactions.unshift({
                 id: Date.now(),
@@ -1287,39 +1295,33 @@
             });
             saveData();
             updateBalance();
+            updateFilterJilidOptions();
             renderChart();
             clearForm();
             filterTransactions();
             alert('Siswa berhasil ditambahkan!');
-            SoundManager.play('success');
         }
 
         function clearForm() {
-            SoundManager.play('click');
             document.getElementById('transaction-date').valueAsDate = new Date();
             document.getElementById('transaction-desc').value = '';
             document.getElementById('transaction-jilid').value = '';
         }
 
         function deleteTransaction(id) {
-            SoundManager.play('click');
             if (confirm('Apakah Anda yakin ingin menghapus data siswa ini?')) {
-                SoundManager.play('notification');
                 transactions = transactions.filter(t => t.id !== id);
                 saveData();
                 updateBalance();
+                updateFilterJilidOptions();
                 renderChart();
                 filterTransactions();
-                SoundManager.play('success');
-            } else {
-                SoundManager.play('error');
             }
         }
 
         function editTransaction(id) {
-            SoundManager.play('click');
             const t = transactions.find(x => x.id === id);
-            if (!t) { SoundManager.play('error'); return; }
+            if (!t) return;
             document.getElementById('transaction-date').value = t.date;
             document.getElementById('transaction-desc').value = t.description;
             document.getElementById('transaction-jilid').value = t.jilid;
@@ -1330,10 +1332,10 @@
                 tab.classList.toggle('active', tab.dataset.page === 'transactions-page');
             });
             currentPage = 'transactions-page';
-            SoundManager.play('success');
 
             transactions = transactions.filter(x => x.id !== id);
             saveData();
+            updateFilterJilidOptions();
             filterTransactions();
             updateBalance();
             renderChart();
@@ -1355,12 +1357,13 @@
             const canvas = document.getElementById('finance-chart');
             const placeholder = document.getElementById('chart-placeholder');
             if (!canvas || !placeholder) return;
+
             if (transactions.length === 0) {
                 if (financeChart) { financeChart.destroy(); financeChart = null; }
-                placeholder.style.display = 'flex';
+                placeholder.classList.remove('hidden');
                 return;
             }
-            placeholder.style.display = 'none';
+            placeholder.classList.add('hidden');
 
             const counts = { '1':0,'2':0,'3':0,'4':0,'5':0,'6':0 };
             transactions.forEach(t => {
@@ -1392,6 +1395,7 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        animation: { duration: 600 },
                         plugins: {
                             legend: { labels: { color: textColor, font: { family: 'Poppins' } } },
                             tooltip: { callbacks: { label: c => 'Siswa: ' + c.raw } }
@@ -1404,7 +1408,8 @@
                                 ticks: {
                                     color: textColor,
                                     font: { family: 'Poppins' },
-                                    precision: 0
+                                    precision: 0,
+                                    stepSize: 1
                                 }
                             }
                         }
@@ -1413,7 +1418,42 @@
             } catch(e) { console.error('Chart error:', e); }
         }
 
-        /* ==================== FILTERS ==================== */
+        /* ==================== FILTER (hanya jilid yang terisi) ==================== */
+        function updateFilterJilidOptions() {
+            const sel = document.getElementById('filter-jilid');
+            if (!sel) return;
+
+            // Hitung jumlah siswa per jilid
+            const counts = { '1':0,'2':0,'3':0,'4':0,'5':0,'6':0 };
+            transactions.forEach(t => {
+                if (counts[t.jilid] !== undefined) counts[t.jilid]++;
+            });
+
+            const previousValue = sel.value;
+            sel.innerHTML = '<option value="">Semua Jilid</option>';
+
+            // Hanya tampilkan jilid yang count > 0
+            ['1','2','3','4','5','6'].forEach(j => {
+                if (counts[j] > 0) {
+                    const opt = document.createElement('option');
+                    opt.value = j;
+                    opt.textContent = `Jilid ${j} (${counts[j]})`;
+                    sel.appendChild(opt);
+                }
+            });
+
+            // Kembalikan pilihan sebelumnya kalau masih valid
+            if (previousValue && counts[previousValue] > 0) {
+                sel.value = previousValue;
+            } else {
+                sel.value = '';
+                // jika filter sebelumnya hilang karena jilid kosong, reset
+                if (currentFilters.jilid && counts[currentFilters.jilid] === 0) {
+                    currentFilters.jilid = '';
+                }
+            }
+        }
+
         function filterTransactions() {
             const { jilid } = currentFilters;
             if (!jilid) {
@@ -1438,19 +1478,16 @@
         }
 
         function applyFilter() {
-            SoundManager.play('click');
             currentFilters.jilid = document.getElementById('filter-jilid').value;
             filterTransactions();
         }
 
         function resetFilters() {
-            SoundManager.play('click');
             document.getElementById('filter-jilid').value = '';
             currentFilters = { jilid: '' };
             filteredTransactions = [...transactions];
             displayGroupedTransactions();
             updateExportInfo();
-            SoundManager.play('success');
         }
 
         /* ==================== DISPLAY ==================== */
@@ -1524,11 +1561,9 @@
 
         /* ==================== EXPORT EXCEL ==================== */
         function exportToExcel() {
-            SoundManager.play('click');
             const { data, label } = getExportData();
             if (data.length === 0) {
                 alert('Tidak ada data siswa untuk diexport pada filter ini!');
-                SoundManager.play('error');
                 return;
             }
 
@@ -1541,7 +1576,7 @@
             const sortedKeys = Object.keys(grouped).sort((a,b) => parseInt(a) - parseInt(b));
 
             const W_NO = 60;
-            const W_NAMA = 400;   // lebar kolom nama
+            const W_NAMA = 400;
             const W_TGL = 140;
 
             const titleCell = 'padding:32px 20px;background:#3498db;color:#ffffff;font-family:Arial,sans-serif;font-size:20pt;font-weight:bold;text-align:center;border:1px solid #cfcfcf;letter-spacing:1px;';
@@ -1646,14 +1681,12 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            SoundManager.play('success');
         }
 
         /* ==================== NAVIGATION ==================== */
         function setupNavigationTabs() {
             document.querySelectorAll('.nav-tab').forEach(tab => {
                 tab.addEventListener('click', () => {
-                    SoundManager.play('click');
                     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
                     const pageId = tab.dataset.page;
@@ -1661,8 +1694,13 @@
                     document.getElementById(pageId).classList.add('active');
                     currentPage = pageId;
                     if (pageId === 'history-page') {
+                        updateFilterJilidOptions();
                         displayGroupedTransactions();
                         updateExportInfo();
+                    }
+                    if (pageId === 'transactions-page') {
+                        // re-render chart setelah tab kembali aktif
+                        requestAnimationFrame(() => setTimeout(renderChart, 50));
                     }
                 });
             });
@@ -1670,7 +1708,6 @@
 
         /* ==================== LOGOUT ==================== */
         function logout() {
-            SoundManager.play('click');
             if (confirm('Apakah Anda yakin ingin keluar?')) {
                 localStorage.removeItem('santriTrackLoggedIn');
                 showLoginScreen();
